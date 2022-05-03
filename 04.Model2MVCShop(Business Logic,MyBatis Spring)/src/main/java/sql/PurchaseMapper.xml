@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+
+	<resultMap id="purchaseSelectMap" type="purchase">
+		<result property="tranNo" 	column="tran_no" 		jdbcType="NUMERIC"/>
+		<result property="prodNo"	column="prod_no" 		jdbcType="NUMERIC" />
+		<result property="buyerId" 	column="buyer_id" 		jdbcType="VARCHAR" />
+		<result property="paymentOption" 	column="payment_option" 		jdbcType="CHAR" />
+		<result property="receiverName" 	column="receiver_name" 		jdbcType="VARCHAR" />
+		<result property="receiverPhone" 		column="receiver_phone" 		jdbcType="VARCHAR" />
+		<result property="divyAddr" 		column="divy_addr" 		jdbcType="VARCHAR" />
+		<result property="divyRequest" 		column="divy_request" 		jdbcType="VARCHAR" />
+		<result property="tranCode" 			column="tran_status_code" 		jdbcType="CHAR" />
+		<result property="orderDate" 			column="order_date" 		jdbcType="VARCHAR" />
+		<result property="divyDate" 			column="dlvy_date" 		jdbcType="DATE" />
+	</resultMap>
+
+	<!-- SQL : INSERT -->
+	<insert 	id="addPurchase"		parameterType="purchase" >
+	 	INSERT
+		INTO transaction(tran_no, payment_option , receiver_name , receiver_phone , divy_addr , dlvy_request, dlvy_date, order_date, prod_no, buyer_id) 
+		VALUES	 ( #{tranNo}, #{paymentOption} , #{receiverName} , #{receiverPhone} , #{divyAddr} , 
+										#{divyRequest} , #{divyDate} , sysdate, #{buyer.userId}, #{purchaseProd.prodNo})
+	 </insert>
+
+	<!-- SQL : SELECT ONE -->
+	 <select 	id="getPurchase"	parameterType="purchase"	resultMap="purchaseSelectMap">
+		SELECT
+		prod_no , buyer_id , payment_option , receiver_name , receiver_phone, divy_addr, divy_request, dlvy_date, order_date	
+		FROM transaction 
+		WHERE tran_no = #{value}
+	 </select>
+	 
+	  <!-- SQL : UPDATE -->
+	 <update	id="updatePurchase"	parameterType="purchase" >
+	   	UPDATE transaction
+	   	<set>
+	   		payment_option 	= #{paymentOption} ,
+			receiver_name	= #{receiverName},
+			receiver_phone  = #{receiverPhone} ,
+			divyAddr		=	#{divy_addr},
+			divy_request	=	#{divyRequest}
+	   	</set>
+	   	WHERE tran_no = #{tranNo}
+	 </update>
+	 
+	 <!-- SQL : UPDATE -->
+	 <update	id="updateTranCode"	parameterType="purchase" >
+	   	UPDATE transaction
+	   	<set>
+	   		tran_status_code 	= #{tranCode} 
+	   	</set>
+	   	WHERE tran_no = #{tranNo}
+	 </update>
+	 
+	 
+	 <select  id="getPurchaseList"  parameterType="purchase"	resultMap="purchaseSelectMap">
+	  	SELECT 
+	  	buyer_id, receiver_name, receiver_phone
+	  	FROM transaction
+		WHERE buyer_id = #{buyerId}
+	 </select>
+
+</mapper>
